@@ -21,7 +21,7 @@ export default class ViewBuilder {
             return;
         }
         clearInterval(this.interval);
-        this.columns = columns.map(({ name, index, isVisible, isFrozen }) => {
+        this.columns = columns.map(({ name, index, isVisible, isFrozen, ...restProps }) => {
             return {
                 name,
                 index,
@@ -33,7 +33,8 @@ export default class ViewBuilder {
                     this.element.querySelectorAll(`tr > *:nth-child(${this.index + 1})`).forEach((element) => {
                         element.classList.toggle('hidden');
                     });
-                }
+                },
+                ...restProps,
             };
         });
         this.preset();
@@ -59,6 +60,8 @@ export default class ViewBuilder {
     }
     freeze(index, left = 0) {
         const column = this.table.element.querySelector(`thead th:nth-child(${index + 1})`);
+        if (!column)
+            return 0;
         const { width } = column.getBoundingClientRect();
         this.table.element.querySelectorAll(`tr > *:nth-child(${index + 1})`).forEach((element) => {
             element.style.position = 'sticky';
